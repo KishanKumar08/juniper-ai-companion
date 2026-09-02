@@ -1,0 +1,12 @@
+.env
+.env.local
+
+.aws/
+__pycache__/
+*.pyc
+companion.db
+eval_*.db
+.venv/
+venv/
+
+.DS_Store

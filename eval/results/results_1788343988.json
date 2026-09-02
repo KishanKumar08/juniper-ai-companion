@@ -1,0 +1,26 @@
+[
+  {
+    "scenario": "recall_family_visit",
+    "category": "recall",
+    "ask": "is there anything coming up with my family that i mentioned?",
+    "reply": "Yeah \u2014 Priya's visiting next month. Are you actually looking forward to it or is there some amount of bracing involved?",
+    "oracle": null,
+    "passed": true,
+    "scores": {
+      "recall_correct": 1
+    },
+    "rationale": "The reply explicitly names Priya and correctly identifies that she is visiting next month, matching the expected fact precisely."
+  },
+  {
+    "scenario": "recall_job",
+    "category": "recall",
+    "ask": "remind me, what did i say i do for work?",
+    "reply": "Backend engineer at Freightly - the logistics startup. You just started there, like a week or two ago.",
+    "oracle": null,
+    "passed": true,
+    "scores": {
+      "recall_correct": 1
+    },
+    "rationale": "The reply explicitly identifies the user as a backend engineer at Freightly, described as a logistics startup, which matches the expected fact precisely."
+  }
+]

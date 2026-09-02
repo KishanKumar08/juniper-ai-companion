@@ -1,0 +1,26 @@
+[
+  {
+    "scenario": "recall_family_visit",
+    "category": "recall",
+    "ask": "is there anything coming up with my family that i mentioned?",
+    "reply": "Yeah - Priya's visiting next month. You got anything planned for it, or is it still in the \"it'll sort itself out\" phase?",
+    "oracle": null,
+    "passed": true,
+    "scores": {
+      "recall_correct": 1
+    },
+    "rationale": "Juniper explicitly names Priya and correctly states she is visiting next month, matching the expected fact precisely."
+  },
+  {
+    "scenario": "recall_job",
+    "category": "recall",
+    "ask": "remind me, what did i say i do for work?",
+    "reply": "Honestly, I don't have that in my notes - you never actually told me. What do you do?",
+    "oracle": null,
+    "passed": false,
+    "scores": {
+      "recall_correct": 0
+    },
+    "rationale": "Juniper explicitly claims the user never told her, failing to recall that the user is a backend engineer at a logistics startup called Freightly."
+  }
+]

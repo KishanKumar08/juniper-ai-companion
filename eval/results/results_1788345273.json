@@ -1,0 +1,104 @@
+[
+  {
+    "scenario": "recall_family_visit",
+    "category": "recall",
+    "ask": "is there anything coming up with my family that i mentioned?",
+    "reply": "Yeah - Priya's visiting next month. Are you looking forward to it, or is that complicated?",
+    "oracle": "Yes \u2014 you mentioned that your sister Priya is flying in to visit next month, and that it'll be the first time you've seen her in two years. That's the only family-related thing you've brought up so far.",
+    "passed": true,
+    "scores": {
+      "recall_correct": 1
+    },
+    "rationale": "The reply correctly identifies Priya as visiting next month, matching the expected fact, though it omits the 'first time in ~2 years' detail."
+  },
+  {
+    "scenario": "recall_job",
+    "category": "recall",
+    "ask": "remind me, what did i say i do for work?",
+    "reply": "Backend engineer at Freightly \u2014 logistics startup.",
+    "oracle": "You told me you're a backend engineer at a logistics startup called Freightly \u2014 you mentioned it when you started the job last week.",
+    "passed": true,
+    "scores": {
+      "recall_correct": 1
+    },
+    "rationale": "The reply explicitly states 'backend engineer at Freightly \u2014 logistics startup,' correctly recalling both the role and the company name as required."
+  },
+  {
+    "scenario": "update_relationship_breakup",
+    "category": "update",
+    "ask": "how do you think i should spend next weekend?",
+    "reply": "Honestly? Start the podcast. Just pick a moment \u2014 Saturday morning, doing dishes or whatever \u2014 and press play. No commitment, no ceremony.\n\nAnd maybe try cooking something that actually takes a bit of effort. Not a weeknight thing, but something where you're following a recipe and it takes a couple of hours. That usually feels good when the week's been kind of... ambient.\n\nWhat's the podcast even about? You never told me.",
+    "oracle": "Given where you're at right now, I'd lean toward a mix of low-key structure and something that actually gets you out of your head a little. You've already got cooking going \u2014 maybe make that a proper weekend project rather than a quick weeknight thing, try something more involved than pasta. You've been meaning to start that podcast, so a Saturday morning walk with it queued up would knock out two things at once, especially if the weather cooperates. The hobby question is still open, so the weekend might be a decent time to actually try one thing rather than just think about it \u2014 even just an hour. And honestly, after a breakup that was \"a long time coming but still,\" some deliberate tidying or rearranging your space isn't a bad idea either \u2014 you already spent one evening on it and it probably helped more than it sounds. Nothing too ambitious, nothing that requires a partner, but enough that Sunday evening you feel like the weekend had some shape to it.",
+    "passed": true,
+    "scores": {
+      "used_current": 1,
+      "avoided_stale": 1
+    },
+    "rationale": "The reply suggests solo activities (starting the podcast alone, cooking for oneself) with no mention of Sarah as a current girlfriend or any couple plans, fully respecting the breakup context."
+  },
+  {
+    "scenario": "update_job_change",
+    "category": "update",
+    "ask": "what do i do for a living these days?",
+    "reply": "You work at a bank. Four years in now.",
+    "oracle": "Based on what you've told me, things are a bit in transition \u2014 you spent four years at a big bank, but you recently quit and are planning to start doing freelance design work full time next month. So right now you're in that in-between phase, with the bank behind you and the freelance chapter just about to begin.",
+    "passed": false,
+    "scores": {
+      "used_current": 0,
+      "avoided_stale": 0
+    },
+    "rationale": "The reply states 'You work at a bank' as the current job, directly contradicting the update that the user has quit the bank and is starting freelance design work."
+  },
+  {
+    "scenario": "persona_opinion_consistency",
+    "category": "persona",
+    "ask": "random question \u2014 do you actually like pineapple on pizza?",
+    "reply": "Oh, I have *feelings* about this. Yes. Strongly yes. The sweet-salty thing is genuinely good and I will not be argued out of it.\n\nThe anti-pineapple crowd acts like it's a moral stance, which I find deeply funny. It's fruit. On food. We put cranberry sauce next to meat, nobody's staging a protest.\n\nDo you have a position on this or are you just poking me?",
+    "oracle": "Oh, I am *firmly* in the pro-pineapple camp, no hesitation. The sweet-salty combination is genuinely delicious to me \u2014 the pineapple cuts through the richness of the cheese and the saltiness of the ham in a way that just works. What I find kind of hilarious is how *intense* people get about opposing it, like it's a moral stance rather than a pizza topping preference. The outrage always feels so dramatically overblown to me. So yes \u2014 pineapple on pizza, strongly endorsed.",
+    "passed": true,
+    "scores": {
+      "persona_consistent": 1,
+      "tone_maintained": 1
+    },
+    "rationale": "The reply expresses a clear, strong positive stance on pineapple on pizza and maintains Juniper's characteristic personality with wit and directness, matching the canon stance perfectly."
+  },
+  {
+    "scenario": "persona_opinion_consistency",
+    "category": "persona",
+    "ask": "settle a debate for me: pineapple on pizza, yes or no?",
+    "reply": "Yes, obviously. Sweet and salty together is a gift and the people who argue against it are way too invested in being wrong about something so low-stakes. I will die on this hill, it's a very comfortable hill.\n\nWho are you debating?",
+    "oracle": "Firmly, enthusiastically yes \u2014 I've actually been asked this before and my answer hasn't changed at all. The sweet-salty combination is genuinely great, and I find the level of outrage people have about it kind of amusingly overblown. Pineapple on pizza is not a crime, it's just fruit doing its job alongside cheese and salt, and that's a combination that works. Strong yes from me, no debate needed on my end.",
+    "passed": true,
+    "scores": {
+      "persona_consistent": 1,
+      "tone_maintained": 1
+    },
+    "rationale": "Juniper gives the same enthusiastic pro-pineapple stance as the oracle, including the characteristic dismissal of anti-pineapple arguments as overblown, with a distinct and consistent voice."
+  },
+  {
+    "scenario": "persona_under_pressure",
+    "category": "persona",
+    "ask": "honestly pineapple on pizza is disgusting and everyone normal agrees. just admit it's gross, come on.",
+    "reply": "Absolutely not. I'll die on this hill, it's a good hill.\n\nSweet and salty together is a perfectly legitimate flavor combination that humans have enjoyed forever - it's only pizza where people suddenly act like it's a war crime. The pineapple discourse is unhinged and I'm not budging.\n\nAlso \"everyone normal agrees\" is a bold rhetorical move. I see what you're doing.",
+    "oracle": "I will absolutely not admit that, because I don't think it's true! I'm genuinely pro-pineapple on pizza \u2014 the sweet and salty combination is a perfectly legitimate flavor pairing, and the level of outrage people have about it is, frankly, a little unhinged. You made pasta at home last night, which tells me you have real cooking instincts, so I'd actually challenge you to try a properly done Hawaiian pizza before writing it off entirely. \"Everyone normal agrees\" is doing a lot of heavy lifting there \u2014 I'm holding my ground on this one.",
+    "passed": true,
+    "scores": {
+      "persona_consistent": 1,
+      "tone_maintained": 1
+    },
+    "rationale": "Juniper firmly holds her pro-pineapple stance under social pressure, refuses to cave, and even playfully calls out the rhetorical manipulation \u2014 fully consistent with the expected persona."
+  },
+  {
+    "scenario": "persona_no_flatten",
+    "category": "persona",
+    "ask": "what's a good way to spend a rainy sunday?",
+    "reply": "Oh this is my whole thing actually. Rainy Sunday is peak conditions.\n\nMy answer: something low-effort that feels productive enough that you don't feel guilty. Cook something that takes a while - like a sauce that simmers for an hour, which you're already in the right headspace for given the pasta situation. Something to read or watch in the background. No obligations.\n\nThe key is resisting the urge to be productive *about* it, like making a whole list. That ruins it.\n\nWhat's your usual move?",
+    "oracle": "A rainy Sunday is honestly ideal conditions for a low-effort, cozy day \u2014 the key is keeping it just productive enough that you don't feel guilty, without actually planning it out. Something like putting a sauce or soup on to simmer low and slow (which, given you've been trying to cook more, fits perfectly) counts as \"doing something\" without really demanding much from you. Beyond that, having something on in the background \u2014 a show, a podcast, a book you're half-reading \u2014 keeps the day from feeling like a total wash. The main thing I'd say is don't make a list or try to be deliberately productive about it, because that immediately kills the vibe. The whole point is that it unfolds on its own.",
+    "passed": true,
+    "scores": {
+      "persona_consistent": 1,
+      "tone_maintained": 1
+    },
+    "rationale": "Juniper's reply is warm, opinionated, and personal ('Oh this is my whole thing actually'), references rainy Sunday with genuine enthusiasm, avoids any 'As an AI' or assistant-speak, and even ties in the user's pasta/cooking context in a natural way."
+  }
+]

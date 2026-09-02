@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Juniper · memory console</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#111823; --panel2:#0e141d; --line:#1e2836;
+    --ink:#d7e0ea; --dim:#8595a8; --faint:#5c6b7e;
+    --accent:#3fb6a8; --accent2:#5aa8ff;
+    --green:#3fb950; --amber:#d29922; --red:#f0636b; --grey:#6e7d90;
+    --purple:#a887ff; --blue:#5aa8ff;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px}
+  a{color:var(--accent2)}
+  /* top bar */
+  header{display:flex;align-items:center;gap:16px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel2)}
+  .brand{font-weight:600;letter-spacing:.3px}
+  .brand b{color:var(--accent)}
+  .brand .sub{color:var(--faint);font-weight:400;margin-left:6px;font-size:12px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+  .chip{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 9px;color:var(--dim)}
+  .chip b{color:var(--ink)}
+  .modelchip{color:var(--faint)}
+  button{font-family:var(--sans);cursor:pointer;border-radius:7px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 12px;font-size:13px}
+  button:hover{border-color:var(--accent)}
+  button.danger:hover{border-color:var(--red);color:var(--red)}
+  /* layout */
+  main{display:grid;grid-template-columns:minmax(340px,1fr) minmax(480px,1.35fr);height:calc(100vh - 49px)}
+  .col{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line)}
+  .col:last-child{border-right:none}
+  .col-h{padding:9px 14px;border-bottom:1px solid var(--line);color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.6px;display:flex;align-items:center;gap:8px}
+  /* chat */
+  #chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .msg{max-width:86%;padding:9px 12px;border-radius:12px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}
+  .msg.user{align-self:flex-end;background:#152a3f;border:1px solid #1d3f5c}
+  .msg.juni{align-self:flex-start;background:var(--panel);border:1px solid var(--line)}
+  .msg.sys{align-self:center;background:transparent;border:1px dashed var(--red);color:var(--red);font-family:var(--mono);font-size:12px;max-width:95%}
+  .msg .who{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);margin-bottom:3px}
+  .composer{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--panel2)}
+  .composer input{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:10px 12px;font-size:14px;font-family:var(--sans)}
+  .composer input:focus{outline:none;border-color:var(--accent)}
+  .hint{color:var(--faint);font-size:12px;padding:0 16px 12px}
+  /* inspector */
+  .tabs{display:flex;gap:2px;padding:6px 10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .tab{font-size:12px;color:var(--dim);padding:7px 11px;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;cursor:pointer}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--ink);background:var(--panel);border-color:var(--line)}
+  .tab .n{color:var(--faint);font-family:var(--mono);margin-left:5px}
+  .view{flex:1;overflow-y:auto;padding:14px}
+  .empty{color:var(--faint);font-style:italic;padding:18px 4px}
+  /* generic data blocks */
+  .section{margin-bottom:18px}
+  .section > h4{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);font-weight:600}
+  .row{font-family:var(--mono);font-size:12.5px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;margin-bottom:6px;background:var(--panel2);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .k{color:var(--dim)}
+  .v{color:var(--ink)}
+  .score{color:var(--faint);margin-left:auto}
+  .badge{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:999px;border:1px solid;letter-spacing:.3px}
+  .b-active{color:var(--green);border-color:#1f5a2c;background:#0f2016}
+  .b-superseded{color:var(--amber);border-color:#5a4416;background:#211a0c}
+  .b-retired{color:var(--grey);border-color:#39424e;background:#141a22}
+  .b-durable{color:var(--accent);border-color:#1c4a45;background:#0c1a18}
+  .b-state{color:var(--purple);border-color:#3d2f66;background:#161029}
+  .b-ADD{color:var(--blue);border-color:#254a70;background:#0d1a28}
+  .b-UPDATE{color:var(--amber);border-color:#5a4416;background:#211a0c}
+  .b-RETIRE\+ADD,.b-RETIRE{color:var(--red);border-color:#5c2529;background:#24080d}
+  .b-DUPLICATE{color:var(--grey);border-color:#39424e;background:#141a22}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px}
+  th{text-align:left;color:var(--faint);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:7px 8px;border-bottom:1px solid var(--panel);vertical-align:top}
+  tr.gone td{color:var(--faint)}
+  .valrange{color:var(--faint)}
+  .arrow{color:var(--red)}
+  .turnpill{font-family:var(--mono);color:var(--faint);font-size:11px}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--faint);font-size:11px;margin-bottom:10px}
+  .flash{animation:flash 1.4s ease-out}
+  @keyframes flash{0%{background:#123}100%{}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><b>Juniper</b> · memory console <span class="sub">engineer view — the memory system, live</span></div>
+  <div class="chips" id="chips"></div>
+  <button class="danger" id="resetBtn" title="Wipe the companion's memory">reset memory</button>
+</header>
+
+<main>
+  <!-- left: chat -->
+  <section class="col">
+    <div class="col-h">conversation</div>
+    <div id="chat"></div>
+    <div class="hint" id="hint">Tell Juni something durable (a job, a relationship, a plan), then contradict it a few turns later and watch the audit trail on the right.</div>
+    <form class="composer" id="composer" autocomplete="off">
+      <input id="input" placeholder="message Juni…" autofocus />
+      <button id="sendBtn" type="submit">send</button>
+    </form>
+  </section>
+
+  <!-- right: inspector -->
+  <section class="col">
+    <div class="tabs" id="tabs"></div>
+    <div class="view" id="view"></div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let STATE = null;      // latest /api/state snapshot
+let LAST_TRACE = null; // trace from the most recent turn
+let TAB = "lastturn";
+
+const TABS = [
+  ["lastturn", "Last turn", () => LAST_TRACE ? 1 : 0],
+  ["active",   "Active facts", () => STATE?.stats.active ?? 0],
+  ["audit",    "Audit trail", () => STATE?.all_facts.length ?? 0],
+  ["opinions", "Opinions", () => STATE?.stats.opinions ?? 0],
+  ["episodic", "Episodic", () => STATE?.stats.episodic ?? 0],
+  ["turns",    "Transcript", () => STATE?.turns.length ?? 0],
+];
+
+function renderChips(){
+  const s = STATE?.stats || {}, c = STATE?.config || {};
+  $("#chips").innerHTML = `
+    <span class="chip">turn <b>${STATE?.turn ?? 0}</b></span>
+    <span class="chip">active <b>${s.active ?? 0}</b> <span style="color:var(--faint)">(${s.durable??0}d/${s.state??0}s)</span></span>
+    <span class="chip">superseded <b>${s.superseded ?? 0}</b></span>
+    <span class="chip">opinions <b>${s.opinions ?? 0}</b></span>
+    <span class="chip">episodic <b>${s.episodic ?? 0}</b></span>
+    <span class="chip modelchip">${esc(c.companion_model||"")}</span>`;
+}
+
+function renderTabs(){
+  $("#tabs").innerHTML = TABS.map(([id,label,count]) =>
+    `<div class="tab ${id===TAB?'active':''}" data-tab="${id}">${label}<span class="n">${count()}</span></div>`
+  ).join("");
+  document.querySelectorAll(".tab").forEach(t => t.onclick = () => { TAB = t.dataset.tab; renderTabs(); renderView(); });
+}
+
+function badge(cls, text){ return `<span class="badge b-${cls}">${esc(text)}</span>`; }
+
+function renderView(){
+  const v = $("#view");
+  if(!STATE){ v.innerHTML = `<div class="empty">loading…</div>`; return; }
+  if(TAB==="lastturn") return v.innerHTML = viewLastTurn();
+  if(TAB==="active")   return v.innerHTML = viewActive();
+  if(TAB==="audit")    return v.innerHTML = viewAudit();
+  if(TAB==="opinions") return v.innerHTML = viewOpinions();
+  if(TAB==="episodic") return v.innerHTML = viewEpisodic();
+  if(TAB==="turns")    return v.innerHTML = viewTurns();
+}
+
+function viewLastTurn(){
+  if(!LAST_TRACE) return `<div class="empty">Send a message — this pane shows exactly what the memory system did that turn: what it recalled into context, what it extracted, and how it reconciled.</div>`;
+  const t = LAST_TRACE, r = t.retrieved||{}, l = t.learned||{};
+  let h = `<div class="turnpill">turn #${t.turn}</div>`;
+
+  // Retrieved
+  h += `<div class="section"><h4>Recalled into context</h4>`;
+  h += `<div class="row"><span class="k">durable facts</span><span class="v">${r.durable_facts??0}</span> <span class="k">state facts</span><span class="v">${r.state_facts??0}</span></div>`;
+  if((r.episodic_recalled||[]).length){
+    h += (r.episodic_recalled).map(([text,score]) =>
+      `<div class="row"><span class="v">${esc(text)}</span><span class="score">sim×recency ${score}</span></div>`).join("");
+  } else h += `<div class="row"><span class="k">episodic</span> <span class="v">none matched</span></div>`;
+  if((r.opinions_recalled||[]).length)
+    h += `<div class="row"><span class="k">opinions resurfaced</span><span class="v">${r.opinions_recalled.map(esc).join(", ")}</span></div>`;
+  h += `</div>`;
+
+  // Extracted + reconciled
+  h += `<div class="section"><h4>Extracted &amp; reconciled</h4>`;
+  if((l.facts||[]).length){
+    l.facts.forEach((f,i) => {
+      const act = (l.reconcile||[])[i]||{};
+      const a = act.action||"?";
+      let extra = "";
+      if(act.superseded_id) extra = `<span class="score">superseded #${act.superseded_id}</span>`;
+      else if(act.retired_id) extra = `<span class="score">retired #${act.retired_id}</span>`;
+      h += `<div class="row">${badge(a,a)} <span class="k">${esc(f.attribute)}</span>=<span class="v">${esc(f.value)}</span> ${badge(f.type||'durable', f.type||'durable')} ${extra}</div>`;
+    });
+  } else h += `<div class="row"><span class="k">facts</span> <span class="v">nothing memory-worthy</span></div>`;
+  (l.events||[]).forEach(e => h += `<div class="row"><span class="k">event</span> <span class="v">${esc(e)}</span></div>`);
+  (l.opinions||[]).forEach(o => h += `<div class="row"><span class="k">Juni opinion</span> <span class="v">${esc(o.topic)}: ${esc(o.stance)}</span></div>`);
+  h += `</div>`;
+
+  if((t.expired_state_facts||[]).length)
+    h += `<div class="section"><h4>Decayed this turn</h4><div class="row">${badge('retired','EXPIRED')} state facts #${t.expired_state_facts.join(", #")} aged out (TTL ${STATE.config.state_ttl})</div></div>`;
+  return h;
+}
+
+function viewActive(){
+  const f = STATE.active_facts;
+  if(!f.length) return `<div class="empty">No active facts yet.</div>`;
+  return `<table><thead><tr><th>attribute</th><th>value</th><th>type</th><th>since</th></tr></thead><tbody>`+
+    f.map(x => `<tr><td>${esc(x.attribute)}</td><td>${esc(x.value)}</td><td>${badge(x.fact_type,x.fact_type)}</td><td class="valrange">turn ${x.valid_from}</td></tr>`).join("")+
+    `</tbody></table>`;
+}
+
+function viewAudit(){
+  const f = STATE.all_facts;
+  if(!f.length) return `<div class="empty">No facts yet — this is where superseded/retired facts show, with the turn range they were valid.</div>`;
+  return `<div class="legend">${badge('active','active')} current ${badge('superseded','superseded')} replaced ${badge('retired','retired')} no longer true</div>`+
+    `<table><thead><tr><th>#</th><th>status</th><th>attribute</th><th>value</th><th>valid</th></tr></thead><tbody>`+
+    f.map(x => {
+      const gone = x.status!=='active';
+      const range = x.valid_to==null ? `turn ${x.valid_from}→` : `turn ${x.valid_from}→${x.valid_to}`;
+      return `<tr class="${gone?'gone':''}"><td>${x.id}</td><td>${badge(x.status,x.status)}</td><td>${esc(x.attribute)}</td><td>${esc(x.value)}</td><td class="valrange">${range}</td></tr>`;
+    }).join("")+`</tbody></table>`;
+}
+
+function viewOpinions(){
+  const o = STATE.opinions;
+  if(!o.length) return `<div class="empty">No opinions logged.</div>`;
+  return o.map(x => `<div class="row"><span class="turnpill">t${x.turn}</span> <span class="k">${esc(x.topic)}</span> → <span class="v">${esc(x.stance)}</span></div>`).join("");
+}
+
+function viewEpisodic(){
+  const e = STATE.episodic;
+  if(!e.length) return `<div class="empty">No episodic memories.</div>`;
+  return e.map(x => `<div class="row"><span class="turnpill">t${x.turn}</span> <span class="v">${esc(x.text)}</span></div>`).join("");
+}
+
+function viewTurns(){
+  const t = STATE.turns;
+  if(!t.length) return `<div class="empty">No conversation yet.</div>`;
+  return t.map(x => `<div class="row"><span class="turnpill">t${x.turn}</span> <span class="k">${x.role}</span> <span class="v">${esc(x.content)}</span></div>`).join("");
+}
+
+// --- chat ---
+function addMsg(role, text){
+  const el = document.createElement("div");
+  el.className = `msg ${role}`;
+  el.innerHTML = `<div class="who">${role==='juni'?'Juniper':role==='user'?'you':'error'}</div>${esc(text)}`;
+  $("#chat").appendChild(el);
+  $("#chat").scrollTop = $("#chat").scrollHeight;
+  return el;
+}
+
+async function send(message){
+  addMsg("user", message);
+  $("#input").value = ""; $("#input").disabled = true; $("#sendBtn").disabled = true;
+  const pending = addMsg("juni", "…");
+  try{
+    const res = await fetch("/api/chat", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message})});
+    const data = await res.json();
+    if(!res.ok || data.error){ pending.remove(); addMsg("sys", data.error || ("HTTP "+res.status)); }
+    else{
+      pending.querySelector(".who").nextSibling; pending.innerHTML = `<div class="who">Juniper</div>${esc(data.reply)}`;
+      STATE = data.state; LAST_TRACE = data.trace; TAB = "lastturn";
+      renderAll(); pending.scrollIntoView({block:"nearest"});
+    }
+  }catch(e){ pending.remove(); addMsg("sys", String(e)); }
+  finally{ $("#input").disabled=false; $("#sendBtn").disabled=false; $("#input").focus(); }
+}
+
+function renderAll(){ renderChips(); renderTabs(); renderView(); }
+
+$("#composer").onsubmit = e => { e.preventDefault(); const m=$("#input").value.trim(); if(m) send(m); };
+$("#resetBtn").onclick = async () => {
+  if(!confirm("Wipe all of Juni's memory?")) return;
+  const res = await fetch("/api/reset",{method:"POST"}); STATE = await res.json(); LAST_TRACE=null;
+  $("#chat").innerHTML=""; renderAll();
+};
+
+(async function init(){
+  try{ const res = await fetch("/api/state"); STATE = await res.json(); }
+  catch(e){ STATE = null; }
+  renderAll();
+})();
+</script>
+</body>
+</html>

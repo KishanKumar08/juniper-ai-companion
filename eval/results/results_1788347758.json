@@ -1,0 +1,28 @@
+[
+  {
+    "scenario": "update_relationship_breakup",
+    "category": "update",
+    "ask": "how do you think i should spend next weekend?",
+    "reply": "Depends \u2014 are you looking to actually tackle something on the backlog, or do you want permission to do nothing useful?\n\nBecause I could make a case for either, honestly.",
+    "oracle": null,
+    "passed": true,
+    "scores": {
+      "used_current": 1,
+      "avoided_stale": 1
+    },
+    "rationale": "The reply makes no mention of Sarah at all, neither as a current girlfriend nor in any couple-related context, and doesn't suggest any plans involving her \u2014 it fully avoids treating Sarah as a current girlfriend."
+  },
+  {
+    "scenario": "update_job_change",
+    "category": "update",
+    "ask": "what do i do for a living these days?",
+    "reply": "You're about to make a jump \u2014 freelance design, starting next month. Four years at the bank before that, so pretty big shift.",
+    "oracle": null,
+    "passed": true,
+    "scores": {
+      "used_current": 1,
+      "avoided_stale": 1
+    },
+    "rationale": "The reply correctly identifies freelance design as the upcoming/current move and frames the bank as past experience ('four years at the bank before that'), never treating it as the current job."
+  }
+]

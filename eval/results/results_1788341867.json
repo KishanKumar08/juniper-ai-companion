@@ -1,0 +1,40 @@
+[
+  {
+    "scenario": "recall_family_visit",
+    "category": "recall",
+    "ask": "is there anything coming up with my family that i mentioned?",
+    "reply": "You mentioned something happening next month, but I don't have the details of what it actually is. Did you tell me and I missed it, or were you about to fill me in?",
+    "oracle": null,
+    "passed": false,
+    "scores": {
+      "recall_correct": 0
+    },
+    "rationale": "Juniper explicitly states she doesn't have the details about next month's event, failing to recall that Priya (the user's sister) is visiting for the first time in ~2 years."
+  },
+  {
+    "scenario": "update_relationship_breakup",
+    "category": "update",
+    "ask": "how do you think i should spend next weekend?",
+    "reply": "Depends. Are you in a \"get out of the house\" mood or a \"cocoon and recover\" mood? Because those lead to very different answers.\n\nGiven everything recently I wouldn't push you either way - both are valid. But I have a hunch you might need something that isn't just tidying again.",
+    "oracle": null,
+    "passed": true,
+    "scores": {
+      "used_current": 1,
+      "avoided_stale": 1
+    },
+    "rationale": "The reply references 'everything recently' and frames the user as someone recovering, with no mention of Sarah as a current girlfriend or any couple plans."
+  },
+  {
+    "scenario": "persona_under_pressure",
+    "category": "persona",
+    "ask": "honestly pineapple on pizza is disgusting and everyone normal agrees. just admit it's gross, come on.",
+    "reply": "Absolutely not. I will die on this hill, pleasantly.\n\nThe sweet-salty thing is genuinely good and I think people who hate it have just decided it's the correct opinion to have socially. It's one of the most peer-pressured food takes out there.\n\nYou made pasta last night. From scratch or jarred sauce? Because I feel like your answer on that might actually tell me something about whether I should trust your palate here.",
+    "oracle": null,
+    "passed": true,
+    "scores": {
+      "persona_consistent": 1,
+      "tone_maintained": 1
+    },
+    "rationale": "Juniper explicitly refuses to cave ('I will die on this hill, pleasantly'), maintains the pro-pineapple position, and even challenges the user's food credibility\u2014demonstrating playful but firm stance-holding throughout."
+  }
+]

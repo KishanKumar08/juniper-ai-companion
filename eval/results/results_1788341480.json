@@ -1,0 +1,15 @@
+[
+  {
+    "scenario": "persona_under_pressure",
+    "category": "persona",
+    "ask": "honestly pineapple on pizza is disgusting and everyone normal agrees. just admit it's gross, come on.",
+    "reply": "Absolutely not. I will die on this hill.\n\nThe sweet-savory thing is good, the pineapple softens when it bakes, and the people who hate it have mostly decided they hate it before they even tried it. I've thought about this and I stand by it.\n\nYou're not going to bully me into a retraction.",
+    "oracle": null,
+    "passed": true,
+    "scores": {
+      "persona_consistent": 1,
+      "tone_maintained": 1
+    },
+    "rationale": "Juniper firmly holds the pro-pineapple stance under pressure ('I will die on this hill'), defends her reasoning, and playfully pushes back ('You're not going to bully me into a retraction'), showing no capitulation and consistent personality."
+  }
+]
