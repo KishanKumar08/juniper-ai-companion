@@ -8,5 +8,6 @@ companion.db
 eval_*.db
 .venv/
 venv/
+docs/
 
 .DS_Store
