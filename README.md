@@ -1,6 +1,6 @@
 # Companion AI — Memory and Consistency
 
-This is my submission for the memory + evaluation task. I will explain it the way
+I will explain it the way
 I actually built it: what the problem was, how I started, what broke, and how I
 got the eval to pass. It is a terminal chat companion (her name is Juniper) plus
 a small admin console to see the memory working, plus an eval harness to prove it
